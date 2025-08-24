@@ -12,7 +12,7 @@ int readInt(string prompt, int minv = INT_MIN, int maxv = INT_MAX) {
     while (true) {
         cout << prompt;
         if (cin >> x && x >= minv && x <= maxv) return x;
-        cout << "❌ Invalid input! Enter a valid number.\n";
+        cout << "Invalid input! Enter a valid number.\n";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -22,7 +22,7 @@ string readString(string prompt) {
     while (true) {
         cout << prompt;
         if (cin >> s && !s.empty()) return s;
-        cout << "❌ Invalid input! Enter again.\n";
+        cout << "Invalid input! Enter again.\n";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -32,7 +32,7 @@ char readChar(string prompt, string allowed = "ynYN") {
     while (true) {
         cout << prompt;
         if (cin >> c && allowed.find(c) != string::npos) return c;
-        cout << "❌ Invalid choice! Try again.\n";
+        cout << " Invalid choice! Try again.\n";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -121,10 +121,10 @@ string init(){
     while(true){
         int c = readInt("\n1. Login\n2. Register\nChoice: ", 1, 2);
         if(login(mob)) { 
-            cout<<"✅ OTP Verified. Login Success!\n"; 
+            cout<<" OTP Verified. Login Success!\n"; 
             break; 
         }
-        else cout<<"❌ Wrong OTP, try again.\n";
+        else cout<<" Wrong OTP, try again.\n";
     }
     return mob;
 }
@@ -200,9 +200,9 @@ void booking(string mob){
         string code = readString("Enter Coupon Code: ");
         if(cp.count(code)){ 
             discount = cp[code];
-            cout<<"✅ Coupon applied! Discount = "<<discount<<"\n";
+            cout<<" Coupon applied! Discount = "<<discount<<"\n";
         } else {
-            cout<<"❌ Invalid coupon.\n";
+            cout<<" Invalid coupon.\n";
         }
     }
     int price = max(0, subtotal - discount);
@@ -225,7 +225,7 @@ void booking(string mob){
     updateSeats(bid,cho,1);
     ofstream("bookings.csv",ios::app)
         <<rand()%10000<<","<<mob<<","<<s<<","<<d<<","<<date<<","<<bid<<","<<sel.name<<","<<price<<","<<nowTime()<<"\n";
-    cout<<"✅ Booking Successful!\n";
+    cout<<" Booking Successful!\n";
 }
 
 // ---------- Booked Tickets ----------
@@ -254,7 +254,7 @@ void booked(string mob){
 
             string id=readString("Enter Ticket ID to view: ");
             auto it=find_if(rows.begin(),rows.end(),[&](auto &r){return r[0]==id;});
-            if(it==rows.end()){ cout<<"❌ Ticket not found.\n"; }
+            if(it==rows.end()){ cout<<" Ticket not found.\n"; }
             else {
                 showRow(*it);
                 char c = readChar("Cancel this ticket? (y/n): ");
@@ -268,7 +268,7 @@ void booked(string mob){
                     while(getline(f3,l3)){auto c3=split(l3); if(c3[0]!=id) all.push_back(l3);}
                     ofstream fo("bookings.csv"); for(auto &x:all) fo<<x<<"\n";
 
-                    cout<<"✅ Ticket cancelled. Refund in 2-5 days.\n";
+                    cout<<" Ticket cancelled. Refund in 2-5 days.\n";
                     rows.erase(it);
                 }
             }
