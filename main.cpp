@@ -121,6 +121,47 @@ bool login(string &mob){
     }
     return false;
 }
+string init(){
+    string mob;
+    while(true){
+        int c = readInt("\n1. Login\n2. Register\nChoice: ", 1, 2);
+        if(login(mob)) { 
+            cout<<"OTP Verified. Login Success!\n"; 
+            break; 
+        }
+        else cout<<"Wrong OTP, try again.\n";
+    }
+    return mob;
+}
+
+// ---------- Booking ----------
+struct Bus {string id,name,src,dst,date,time,type,ac,seat; int price;};
+
+vector<Bus> readBuses(){
+    vector<Bus> v; ifstream f("buses.csv"); string l;
+    while(getline(f,l)){auto c=split(l); if(c.size()>=10)
+        v.push_back({c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8],stoi(c[9])});}
+    return v;
+}
+
+map<int,int> seatMap(string bid){
+    map<int,int> m; ifstream f("seats.csv"); string l;
+    while(getline(f,l)){auto c=split(l); if(c[0]==bid) m[stoi(c[1])]=stoi(c[2]);}
+    return m;
+}
+
+void updateSeats(string bid,vector<int> sel,int occ){
+    ifstream f("seats.csv"); string l; vector<string> out;
+    while(getline(f,l)){auto c=split(l); if(c[0]==bid){
+        int s=stoi(c[1]); if(find(sel.begin(),sel.end(),s)!=sel.end()) c[2]=to_string(occ);
+        l=join(c);
+    } out.push_back(l);}
+    ofstream o("seats.csv"); for(auto &x:out) o<<x<<"\n";
+}
+
+map<string,int> coupons(){map<string,int> m;ifstream f("coupon.csv");string l;
+    while(getline(f,l)){auto c=split(l);m[c[0]]=stoi(c[1]);} return m;}
+
 int main(){
     seedData();
     string mob=init();
