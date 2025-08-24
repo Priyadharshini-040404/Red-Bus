@@ -161,6 +161,79 @@ void updateSeats(string bid,vector<int> sel,int occ){
 
 map<string,int> coupons(){map<string,int> m;ifstream f("coupon.csv");string l;
     while(getline(f,l)){auto c=split(l);m[c[0]]=stoi(c[1]);} return m;}
+void booking(string mob){
+    auto buses=readBuses();
+    string s = readString("Source: ");
+    string d = readString("Destination: ");
+    string date = readString("Date (dd-mm-yyyy): ");
+    s=lower(s); d=lower(d); date=normalizeDate(date);
+
+    vector<Bus> res; 
+    for(auto &b:buses) 
+        if(lower(b.src)==s && lower(b.dst)==d && normalizeDate(b.date)==date) res.push_back(b);
+
+    if(res.empty()){cout<<"No buses.\n";return;}
+    cout<<"\nAvailable Buses:\n";
+    for(auto &b:res) cout<<b.id<<" "<<b.name<<" "<<b.time<<" "<<b.type<<" "<<b.seat<<" Rs."<<b.price<<"\n";
+
+    string bid = readString("Select Bus ID: ");
+    Bus sel; bool found=false; 
+    for(auto &b:res) if(b.id==bid){ sel=b; found=true; }
+    if(!found){cout<<"Invalid Bus ID.\n"; return;}
+
+    int n = readInt("Seats to book: ",1,24);
+    auto m=seatMap(bid); cout<<"Available:"; 
+    for(auto &p:m) if(p.second==0) cout<<p.first<<" "; 
+    cout<<"\nSelect "<<n<<" seats: ";
+    vector<int> cho(n); 
+    for(int i=0;i<n;i++) cho[i]=readInt("Seat: ",1,24);
+
+    string board = readString("Boarding: ");
+    string drop = readString("Dropping: ");
+
+    for(int i=0;i<n;i++){string nm,g;int age;
+        nm=readString("Passenger "+to_string(i+1)+" Name: ");
+        age=readInt("Age: ",1,120);
+        g=readString("Gender: ");
+    }
+
+    int subtotal = sel.price * n;
+    int discount = 0;
+    char chc = readChar("Have coupon(y/n)? ");
+    if(chc=='y' || chc=='Y'){
+        auto cp=coupons(); 
+        cout<<"Available Coupons:\n";
+        for(auto &p:cp) cout<<p.first<<" -> Rs."<<p.second<<" off\n";
+        string code = readString("Enter Coupon Code: ");
+        if(cp.count(code)){ 
+            discount = cp[code];
+            cout<<"Coupon applied! Discount = "<<discount<<"\n";
+        } else {
+            cout<<"Invalid coupon.\n";
+        }
+    }
+    int price = max(0, subtotal - discount);
+    cout<<"Subtotal:"<<subtotal<<" Discount:"<<discount<<" Total:"<<price<<"\n";
+
+    char ready;
+    while(true){
+        ready = readChar("Ready to pay? (y/n): ");
+        if(ready=='y'||ready=='Y') break;
+        if(ready=='n'||ready=='N'){ cout<<"Returning to booking again...\n"; booking(mob); return; }
+    }
+
+    int pm = readInt("Payment Mode 1.UPI 2.NetBanking 3.Card\nChoice: ",1,3);
+    if(pm==1){string upi=readString("Enter UPI Id: "); cout<<"Authenticating...\n";}
+    else if(pm==2){string bank=readString("Bank: "); string otp=readString("Enter 4-digit OTP: "); }
+    else if(pm==3){string card=readString("Card No: "); string otp=readString("Enter OTP: "); }
+
+    cout<<"Processing...\n"; this_thread::sleep_for(1s);
+
+    updateSeats(bid,cho,1);
+    ofstream("bookings.csv",ios::app)
+        <<rand()%10000<<","<<mob<<","<<s<<","<<d<<","<<date<<","<<bid<<","<<sel.name<<","<<price<<","<<nowTime()<<"\n";
+    cout<<"Booking Successful!\n";
+}
 
 int main(){
     seedData();
