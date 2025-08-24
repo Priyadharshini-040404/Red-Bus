@@ -56,6 +56,7 @@ string join(vector<string> v,char d=','){
 }
 string lower(string s){ for(char &c:s) c=tolower(c); return s; }
 string normalizeDate(string s){ for(char &c:s) if(c=='/') c='-'; return s; }
+
 // ---------- Date Compare ----------
 bool isPastDate(string dateStr) {
     // format: dd-mm-yyyy
@@ -121,6 +122,7 @@ bool login(string &mob){
     }
     return false;
 }
+
 string init(){
     string mob;
     while(true){
@@ -161,6 +163,7 @@ void updateSeats(string bid,vector<int> sel,int occ){
 
 map<string,int> coupons(){map<string,int> m;ifstream f("coupon.csv");string l;
     while(getline(f,l)){auto c=split(l);m[c[0]]=stoi(c[1]);} return m;}
+
 void booking(string mob){
     auto buses=readBuses();
     string s = readString("Source: ");
@@ -234,6 +237,7 @@ void booking(string mob){
         <<rand()%10000<<","<<mob<<","<<s<<","<<d<<","<<date<<","<<bid<<","<<sel.name<<","<<price<<","<<nowTime()<<"\n";
     cout<<"Booking Successful!\n";
 }
+
 void booking(string mob){
     auto buses=readBuses();
     string s = readString("Source: ");
@@ -307,6 +311,7 @@ void booking(string mob){
         <<rand()%10000<<","<<mob<<","<<s<<","<<d<<","<<date<<","<<bid<<","<<sel.name<<","<<price<<","<<nowTime()<<"\n";
     cout<<"Booking Successful!\n";
 }
+
 // ---------- Edit Profile ----------
 void edit(string mob){
     string n=readString("Name: ");
@@ -317,6 +322,7 @@ void edit(string mob){
     cout<<"Profile updated.\n";
 }
 
+// ---------- Main ----------
 int main(){
     seedData();
     string mob=init();
@@ -333,3 +339,5 @@ int main(){
             else cout<<"Program Ended.\n"; 
             break; 
         }
+    }
+}
