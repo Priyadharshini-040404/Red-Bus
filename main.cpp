@@ -56,6 +56,71 @@ string join(vector<string> v,char d=','){
 }
 string lower(string s){ for(char &c:s) c=tolower(c); return s; }
 string normalizeDate(string s){ for(char &c:s) if(c=='/') c='-'; return s; }
+// ---------- Date Compare ----------
+bool isPastDate(string dateStr) {
+    // format: dd-mm-yyyy
+    int d, m, y;
+    replace(dateStr.begin(), dateStr.end(), '-', ' ');
+    stringstream ss(dateStr);
+    ss >> d >> m >> y;
+
+    time_t t = time(0);
+    tm *now = localtime(&t);
+    int cd = now->tm_mday, cm = now->tm_mon + 1, cy = now->tm_year + 1900;
+
+    if(y < cy) return true;
+    if(y > cy) return false;
+    if(m < cm) return true;
+    if(m > cm) return false;
+    return (d < cd);
+}
+
+// ---------- Seed Data ----------
+void seedData(){
+    if(!ifstream("buses.csv").good()){
+        ofstream f("buses.csv");
+        for(int i=1;i<=20;i++)
+            f<<"B"<<i<<",Bus"<<i<<",Chennai,Bangalore,01-09-2025,"<<(6+i)<<":00,"
+             <<(i%2?"AC":"Non-AC")<<","<<(i%2?"Yes":"No")<<","<<(i%2?"Sleeper":"Seater")<<","<<500+(i*10)<<"\n";
+    }
+    if(!ifstream("seats.csv").good()){
+        ofstream f("seats.csv");
+        for(int i=1;i<=20;i++) for(int s=1;s<=24;s++) f<<"B"<<i<<","<<s<<",0\n";
+    }
+    if(!ifstream("coupon.csv").good()){
+        ofstream f("coupon.csv");
+        f<<"SAVE50,50\nBUS100,100\nRB75,75\nFEST200,200\nFIRST150,150\n"
+         <<"WEEKEND80,80\nTRAVEL60,60\nMEGA250,250\nOFF120,120\nTRY30,30\n";
+    }
+    if(!ifstream("user.csv").good()) ofstream("user.csv");
+    if(!ifstream("bookings.csv").good()) ofstream("bookings.csv");
+    if(!ifstream("profiles.csv").good()) ofstream("profiles.csv");
+}
+
+// ---------- Login/Register ----------
+bool login(string &mob){
+    mob = readString("Enter Mobile Number: ");
+
+    // check if already exists
+    ifstream f("user.csv");
+    string line;
+    while(getline(f,line)){
+        if(line==mob){
+            cout<<"You are already logged in.\n";
+            return true; // skip OTP
+        }
+    }
+
+    // if new user, verify OTP
+    string otp=genOTP();
+    cout<<"Your Redbus login OTP is "<<otp<<"\n";
+    string in = readString("Enter OTP: ");
+    if(in==otp){
+        ofstream("user.csv",ios::app)<<mob<<"\n";
+        return true;
+    }
+    return false;
+}
 int main(){
     seedData();
     string mob=init();
