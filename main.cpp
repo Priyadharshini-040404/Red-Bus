@@ -307,6 +307,15 @@ void booking(string mob){
         <<rand()%10000<<","<<mob<<","<<s<<","<<d<<","<<date<<","<<bid<<","<<sel.name<<","<<price<<","<<nowTime()<<"\n";
     cout<<"Booking Successful!\n";
 }
+// ---------- Edit Profile ----------
+void edit(string mob){
+    string n=readString("Name: ");
+    string g=readString("Gender: ");
+    string d=readString("DOB: ");
+    string e=readString("Email: ");
+    ofstream("profiles.csv",ios::app)<<mob<<","<<n<<","<<g<<","<<d<<","<<e<<"\n";
+    cout<<"Profile updated.\n";
+}
 
 int main(){
     seedData();
